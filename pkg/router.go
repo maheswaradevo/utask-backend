@@ -10,6 +10,7 @@ func Init(router *echo.Echo) {
 	{
 		InitAuthModule(app)
 	}
+
 }
 
 func InitAuthModule(routerGroup *echo.Group) *echo.Group {
