@@ -69,7 +69,6 @@ func Init() {
 	config.GoogleClientSecret = os.Getenv("GOOGLE_CLIENT_SECRET")
 	config.GoogleStateString = os.Getenv("GOOGLE_STATE_STRING")
 	config.GoogleCalendarAPIKey = os.Getenv("GOOGLE_CALENDAR_API_KEY")
-
 	config.RedisConfig.URI = os.Getenv("REDIS_POOL_URI")
 	config.RedisConfig.Password = os.Getenv("REDIS_POOL_PASSWORD")
 
@@ -120,8 +119,8 @@ func NewRedisClient() (*redis.Client, error) {
 		MaxConnAge:   config.RedisConfig.MaxConnAge,
 	}
 	rc := redis.NewClient(opts)
-	ctx, cancel := context.WithTimeout(context.Background(), config.RedisConfig.DialTimeout*time.Second)
-	defer cancel()
+	ctx := context.Background()
+
 	if err := rc.Ping(ctx).Err(); err != nil {
 		return nil, err
 	}
