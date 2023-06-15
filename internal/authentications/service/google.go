@@ -87,12 +87,6 @@ func (s *googleOauthService) CallBackFromGoogle(w http.ResponseWriter, r *http.R
 
 		_, err = s.googleRedisRepository.FindByKey(context.Background(), redisKey)
 		if err != nil && expTime == 0 {
-			token, err := oauthConfGl.Exchange(context.Background(), code)
-			if err != nil {
-				log.Error("oauthConfGl.Exchange() failed with " + err.Error() + "\n")
-				return
-			}
-
 			data := models.OauthRedisData{
 				AccessToken:  token.AccessToken,
 				RefreshToken: token.RefreshToken,
