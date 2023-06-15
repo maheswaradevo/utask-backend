@@ -16,6 +16,7 @@ func main() {
 
 	cfg := config.GetConfig()
 
+	config.NewOauthGoogle()
 	// db := config.GetDatabase(cfg.Database.Username, cfg.Database.Password, cfg.Database.Address, cfg.Database.Name)
 	app := echo.New()
 
@@ -24,7 +25,7 @@ func main() {
 		log.Fatalf("error connection to redis: %v", err)
 	}
 
-	pkg.Init(app, rc)
+	pkg.Init(app, rc, *cfg)
 
 	address := fmt.Sprintf("%s:%s", "0.0.0.0", cfg.Port)
 

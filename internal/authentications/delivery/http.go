@@ -26,7 +26,6 @@ func AuthenticationNewDelivery(routeGroupV1 *echo.Group, oauthService authentica
 }
 
 func (a AuthenticationHTTPDelivery) HandleGoogleLogin(ctx echo.Context) error {
-	a.oauthService.InitializeOauthGoogle()
 	a.oauthService.HandleGoogleLogin(ctx.Response().Writer, ctx.Request())
 	return nil
 }

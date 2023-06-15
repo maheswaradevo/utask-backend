@@ -11,6 +11,19 @@ import (
 
 	"github.com/go-redis/redis/v8"
 	"github.com/joho/godotenv"
+	"golang.org/x/oauth2"
+	"golang.org/x/oauth2/google"
+)
+
+var (
+	OauthConfGl = &oauth2.Config{
+		ClientID:     "",
+		ClientSecret: "",
+		RedirectURL:  "http://localhost:3000/auth/google/callback",
+		Scopes:       []string{"https://www.googleapis.com/auth/userinfo.email", "https://www.googleapis.com/auth/calendar.events", "https://www.googleapis.com/auth/calendar"},
+		Endpoint:     google.Endpoint,
+	}
+	OauthStateStringGl = ""
 )
 
 type Config struct {
@@ -125,6 +138,12 @@ func NewRedisClient() (*redis.Client, error) {
 		return nil, err
 	}
 	return rc, nil
+}
+
+func NewOauthGoogle() {
+	OauthConfGl.ClientID = config.GoogleClientID
+	OauthConfGl.ClientSecret = config.GoogleClientSecret
+	OauthStateStringGl = config.GoogleStateString
 }
 
 func GetConfig() *Config {
