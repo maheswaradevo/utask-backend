@@ -21,6 +21,8 @@ func HandleLogin(w http.ResponseWriter, r *http.Request, oauthConf *oauth2.Confi
 	parameters.Add("redirect_uri", oauthConf.RedirectURL)
 	parameters.Add("response_type", "code")
 	parameters.Add("state", oauthStateString)
+	parameters.Add("access_type", "offline")
+	parameters.Add("prompt", "consent")
 	URL.RawQuery = parameters.Encode()
 	url := URL.String()
 	log.Info(url)

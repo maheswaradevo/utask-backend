@@ -2,8 +2,8 @@ package main
 
 import (
 	"fmt"
+	"log"
 
-	"github.com/maheswaradevo/utask-backend/internal/authentications/service"
 	"github.com/maheswaradevo/utask-backend/pkg"
 
 	_ "github.com/go-sql-driver/mysql"
@@ -19,11 +19,14 @@ func main() {
 	// db := config.GetDatabase(cfg.Database.Username, cfg.Database.Password, cfg.Database.Address, cfg.Database.Name)
 	app := echo.New()
 
-	pkg.Init(app)
+	rc, err := config.NewRedisClient()
+	if err != nil {
+		log.Fatalf("error connection to redis: %v", err)
+	}
+
+	pkg.Init(app, rc)
 
 	address := fmt.Sprintf("%s:%s", "0.0.0.0", cfg.Port)
-
-	service.InitializeOauthGoogle()
 
 	app.Start(address)
 }
