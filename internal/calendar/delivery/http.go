@@ -21,6 +21,7 @@ func CalendarNewDelivery(routerGroupV1 *echo.Group, calendarService calendar.Cal
 	routeGroup = calendarDelivery.routerGroupV1.Group("calendar")
 	{
 		routeGroup.GET("/", calendarDelivery.GetEvents)
+		routeGroup.GET("/:eventId", calendarDelivery.GetEventByID)
 	}
 	return
 }
@@ -35,4 +36,17 @@ func (c CalendarHTTPDelivery) GetEvents(ctx echo.Context) error {
 		})
 	}
 	return c.Ok(ctx, eventList)
+}
+
+func (c CalendarHTTPDelivery) GetEventByID(ctx echo.Context) error {
+	eventId := ctx.Param("eventId")
+	eventDetail, err := c.calendarService.GetEventByID(helpers.Context(ctx), eventId)
+	if err != nil {
+		return c.InternalServerError(ctx, &common.APIResponse{
+			Code:    500,
+			Message: "Internal Server Error",
+			Errors:  err,
+		})
+	}
+	return c.Ok(ctx, eventDetail)
 }

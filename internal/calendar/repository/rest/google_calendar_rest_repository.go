@@ -98,18 +98,44 @@ func (c *calendarRestRepository) GetEventList(ctx context.Context, token *oauth2
 	return &eventList, nil
 }
 
-// func (c *calendarRestRepository) GetEventByID(ctx context.Context, eventId string, token *oauth2.Token) (*models.EventResource, error) {
-// 	svc, err := calendar.NewService(context.Background(), option.WithHTTPClient(config.CalendarServiceClient(token)))
-// 	if err != nil {
-// 		c.logger.Error("error: %v", zap.Error(err))
-// 		return nil, err
-// 	}
+func (c *calendarRestRepository) GetEventByID(ctx context.Context, eventId string, token *oauth2.Token) (*models.EventResource, error) {
+	svc, err := calendar.NewService(context.Background(), option.WithHTTPClient(config.CalendarServiceClient(token)))
+	if err != nil {
+		c.logger.Error("error: %v", zap.Error(err))
+		return nil, err
+	}
+	event, err := svc.Events.Get("primary", eventId).Do()
+	if err != nil {
+		c.logger.Error("error: %v", zap.Error(err))
+		return nil, err
+	}
 
-// 	event, err := svc.Events.Get("primary", eventId).Do()
-// 	if err != nil {
-// 		c.logger.Error("error: %v", zap.Error(err))
-// 		return nil, err
-// 	}
-// 	allEvent := []models.EventResource{}
+	start := models.StartTime{
+		DateTime: event.Start.DateTime,
+		TimeZone: event.Start.TimeZone,
+	}
 
-// }
+	end := models.EndTime{
+		DateTime: event.End.DateTime,
+		TimeZone: event.End.TimeZone,
+	}
+	eventDetail := models.EventResource{
+		Kind:        event.Kind,
+		Summary:     event.Summary,
+		HangoutLink: event.HangoutLink,
+		ID:          event.Id,
+		Created:     event.Created,
+		Updated:     event.Updated,
+		Start:       start,
+		End:         end,
+		Creator: models.Creator{
+			Email:       event.Creator.Email,
+			DisplayName: event.Creator.DisplayName,
+		},
+		Reminders: models.Reminders{
+			UseDefault: event.Reminders.UseDefault,
+		},
+	}
+
+	return &eventDetail, err
+}
