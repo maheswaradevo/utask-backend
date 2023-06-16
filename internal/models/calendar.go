@@ -15,22 +15,23 @@ type EventList struct {
 }
 
 type EventResource struct {
-	Kind      string    `json:"kind"`
-	Etag      string    `json:"etag"`
-	ID        string    `json:"id"`
-	Status    string    `json:"status"`
-	HTMLLink  string    `json:"htmlLink"`
-	Created   string    `json:"created"`
-	Updated   string    `json:"updated"`
-	Summary   string    `json:"summary"`
-	Creator   Creator   `json:"creator"`
-	Organizer Organizer `json:"organizer"`
-	Start     StartTime `json:"start"`
-	End       EndTime   `json:"end"`
-	ICalUID   string    `json:"iCalUID"`
-	Sequence  int       `json:"sequence"`
-	Reminders Reminders `json:"reminders"`
-	EventType string    `json:"eventType"`
+	Kind        string    `json:"kind"`
+	Etag        string    `json:"etag"`
+	ID          string    `json:"id"`
+	Status      string    `json:"status"`
+	HTMLLink    string    `json:"htmlLink"`
+	Created     string    `json:"created"`
+	Updated     string    `json:"updated"`
+	Summary     string    `json:"summary"`
+	Creator     Creator   `json:"creator"`
+	Organizer   Organizer `json:"organizer"`
+	Start       StartTime `json:"start"`
+	End         EndTime   `json:"end"`
+	ICalUID     string    `json:"iCalUID"`
+	Sequence    int       `json:"sequence"`
+	Reminders   Reminders `json:"reminders"`
+	EventType   string    `json:"eventType"`
+	HangoutLink string    `json:"hangoutLink"`
 }
 
 type DefaultReminder struct {

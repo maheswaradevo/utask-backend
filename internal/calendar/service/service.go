@@ -46,3 +46,24 @@ func (s *calendarService) GetEvent(ctx context.Context) (*models.EventList, erro
 	}
 	return eventList, nil
 }
+
+func (s *calendarService) GetEventByID(ctx context.Context, eventId string) (*models.EventResource, error) {
+	var redisKey = helpers.CacheWithPrefix(constants.CacheAuthGoogle, constants.CacheGoogleLogin)
+	data, err := s.authRedisRepo.FindByKey(ctx, redisKey)
+	if err != nil {
+		s.logger.Error("error: %v", zap.Error(err))
+		return nil, err
+	}
+
+	event, err := s.calendarRest.GetEventByID(ctx, eventId, &oauth2.Token{
+		AccessToken:  data.AccessToken,
+		TokenType:    data.TokenType,
+		RefreshToken: data.RefreshToken,
+		Expiry:       data.Expiry,
+	})
+	if err != nil {
+		s.logger.Error("error: %v", zap.Error(err))
+		return nil, err
+	}
+	return event, nil
+}
