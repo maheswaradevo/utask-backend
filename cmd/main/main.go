@@ -5,6 +5,7 @@ import (
 	"log"
 
 	"github.com/maheswaradevo/utask-backend/pkg"
+	"go.uber.org/zap"
 
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/labstack/echo/v4"
@@ -16,6 +17,8 @@ func main() {
 
 	cfg := config.GetConfig()
 
+	logger, _ := zap.NewProduction()
+
 	config.NewOauthGoogle()
 	// db := config.GetDatabase(cfg.Database.Username, cfg.Database.Password, cfg.Database.Address, cfg.Database.Name)
 	app := echo.New()
@@ -25,7 +28,7 @@ func main() {
 		log.Fatalf("error connection to redis: %v", err)
 	}
 
-	pkg.Init(app, rc, *cfg)
+	pkg.Init(app, rc, *cfg, logger)
 
 	address := fmt.Sprintf("%s:%s", "0.0.0.0", cfg.Port)
 
