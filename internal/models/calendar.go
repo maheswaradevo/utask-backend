@@ -62,5 +62,11 @@ type Organizer struct {
 }
 
 type Reminders struct {
-	UseDefault bool `json:"useDefault"`
+	UseDefault bool        `json:"useDefault"`
+	Overrides  []Overrides `json:"overrides"`
+}
+
+type Overrides struct {
+	Method  string `json:"method"`
+	Minutes int    `json:"minutes"`
 }
