@@ -26,6 +26,13 @@ func CalendarNewDelivery(routerGroupV1 *echo.Group, calendarService calendar.Cal
 }
 
 func (c CalendarHTTPDelivery) GetEvents(ctx echo.Context) error {
-	c.calendarService.GetEvent(helpers.Context(ctx))
-	return nil
+	eventList, err := c.calendarService.GetEvent(helpers.Context(ctx))
+	if err != nil {
+		return c.InternalServerError(ctx, &common.APIResponse{
+			Code:    500,
+			Message: "Internal Server Error",
+			Errors:  err,
+		})
+	}
+	return c.Ok(ctx, eventList)
 }
