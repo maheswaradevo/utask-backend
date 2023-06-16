@@ -2,7 +2,6 @@ package rest
 
 import (
 	"context"
-	"fmt"
 	"time"
 
 	"github.com/maheswaradevo/utask-backend/internal/models"
@@ -43,35 +42,23 @@ func (c *calendarRestRepository) GetEventList(ctx context.Context, token *oauth2
 	}
 
 	eventResources := make([]models.EventResource, len(events.Items))
-	fmt.Printf("len(events.Items): %v\n", len(events.Items))
 	if len(events.Items) == 0 {
 		c.logger.Info("no items to show")
 	} else {
 		for item, eventResource := range events.Items {
+			overrides := make([]models.Overrides, len(events.Items[item].Reminders.Overrides))
+
 			eventResources[item].Kind = eventResource.Kind
 			eventResources[item].Etag = eventResource.Etag
 			eventResources[item].ID = eventResource.Id
 			eventResources[item].Status = eventResource.Status
 			eventResources[item].HTMLLink = eventResource.HtmlLink
-			// createdTime, err := time.Parse("2006-01-02T15:04:05Z", eventResource.Created)
-			// if err != nil {
-			// 	c.logger.Error("error: %v", zap.Error(err))
-			// 	return nil, err
-			// }
 			eventResources[item].Created = eventResource.Created
 			eventResources[item].Summary = eventResource.Summary
-			// startDateTime, err := time.Parse("2006-01-02", eventResource.Start.DateTime)
-			// if err != nil {
-			// 	c.logger.Error("error: %v", zap.Error(err))
-			// 	return nil, err
-			// }
+
 			eventResources[item].Start.DateTime = eventResource.Start.DateTime
 			eventResources[item].Start.TimeZone = eventResource.Start.TimeZone
-			// endDateTime, err := time.Parse("2006-01-02T15:04:05Z", eventResource.End.DateTime)
-			// if err != nil {
-			// 	c.logger.Error("error: %v", zap.Error(err))
-			// 	return nil, err
-			// }
+
 			eventResources[item].End.DateTime = eventResource.End.DateTime
 			eventResources[item].End.TimeZone = eventResource.End.TimeZone
 
@@ -80,6 +67,14 @@ func (c *calendarRestRepository) GetEventList(ctx context.Context, token *oauth2
 
 			eventResources[item].Organizer.DisplayName = eventResource.Organizer.DisplayName
 			eventResources[item].Organizer.Email = eventResource.Organizer.Email
+
+			eventResources[item].Reminders.UseDefault = eventResource.Reminders.UseDefault
+
+			for i, override := range eventResource.Reminders.Overrides {
+				overrides[i].Method = override.Method
+				overrides[i].Minutes = int(override.Minutes)
+			}
+			eventResources[item].Reminders.Overrides = overrides
 		}
 	}
 
@@ -110,6 +105,11 @@ func (c *calendarRestRepository) GetEventByID(ctx context.Context, eventId strin
 		return nil, err
 	}
 
+	overrides := make([]models.Overrides, 1)
+	for item, override := range event.Reminders.Overrides {
+		overrides[item].Method = override.Method
+		overrides[item].Minutes = int(override.Minutes)
+	}
 	start := models.StartTime{
 		DateTime: event.Start.DateTime,
 		TimeZone: event.Start.TimeZone,
@@ -134,6 +134,7 @@ func (c *calendarRestRepository) GetEventByID(ctx context.Context, eventId strin
 		},
 		Reminders: models.Reminders{
 			UseDefault: event.Reminders.UseDefault,
+			Overrides:  overrides,
 		},
 	}
 

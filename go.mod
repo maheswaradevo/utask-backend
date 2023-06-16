@@ -6,6 +6,7 @@ require (
 	github.com/go-redis/redis/v8 v8.11.5
 	github.com/json-iterator/go v1.1.12
 	github.com/labstack/echo/v4 v4.10.2
+	go.uber.org/zap v1.24.0
 )
 
 require (
@@ -24,7 +25,6 @@ require (
 	go.opencensus.io v0.24.0 // indirect
 	go.uber.org/atomic v1.7.0 // indirect
 	go.uber.org/multierr v1.6.0 // indirect
-	go.uber.org/zap v1.24.0 // indirect
 	google.golang.org/appengine v1.6.7 // indirect
 	google.golang.org/genproto/googleapis/rpc v0.0.0-20230530153820-e85fd2cbaebc // indirect
 	google.golang.org/grpc v1.55.0 // indirect
