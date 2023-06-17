@@ -2,8 +2,6 @@ package helpers
 
 import (
 	"context"
-	"fmt"
-	"io"
 	"net/http"
 	"net/url"
 	"strings"
@@ -18,7 +16,6 @@ func HandleLogin(w http.ResponseWriter, r *http.Request, oauthConf *oauth2.Confi
 	if err != nil {
 		log.Error("Parse: " + err.Error())
 	}
-	log.Info(URL.String())
 	parameters := url.Values{}
 	parameters.Add("client_id", oauthConf.ClientID)
 	parameters.Add("scope", strings.Join(oauthConf.Scopes, " "))
@@ -29,7 +26,6 @@ func HandleLogin(w http.ResponseWriter, r *http.Request, oauthConf *oauth2.Confi
 	parameters.Add("prompt", "consent")
 	URL.RawQuery = parameters.Encode()
 	url := URL.String()
-	log.Info(url)
 	http.Redirect(w, r, url, http.StatusTemporaryRedirect)
 }
 
@@ -43,7 +39,6 @@ func CallbackFromGoogle(w http.ResponseWriter, r *http.Request, oauthConfGl *oau
 	}
 
 	code := r.FormValue("code")
-	log.Info(code)
 
 	if code == "" {
 		log.Warn("Code not found..")
@@ -63,31 +58,6 @@ func CallbackFromGoogle(w http.ResponseWriter, r *http.Request, oauthConfGl *oau
 		authData.RefreshToken = token.RefreshToken
 		authData.Expiry = token.Expiry
 		authData.TokenType = token.TokenType
-
-		fmt.Printf("authData.AccessToken: %v\n", authData.AccessToken)
-		log.Info("TOKEN>> AccessToken>> " + token.AccessToken)
-		log.Info("TOKEN>> Expiration Time>> ", token.Expiry.Hour())
-		log.Info("TOKEN>> RefreshToken>> " + token.RefreshToken)
-
-		resp, err := http.Get("https://www.googleapis.com/oauth2/v2/userinfo?access_token=" + url.QueryEscape(token.AccessToken))
-		if err != nil {
-			log.Error("Get: " + err.Error() + "\n")
-			http.Redirect(w, r, "/", http.StatusTemporaryRedirect)
-			return nil
-		}
-		defer resp.Body.Close()
-
-		response, err := io.ReadAll(resp.Body)
-		if err != nil {
-			log.Error("ReadAll: " + err.Error() + "\n")
-			http.Redirect(w, r, "/", http.StatusTemporaryRedirect)
-			return nil
-		}
-
-		log.Info("parseResponseBody: " + string(response) + "\n")
-
-		w.Write([]byte("Hello, I'm protected\n"))
-		w.Write([]byte(string(response)))
 		return token
 
 	}
