@@ -2,6 +2,7 @@ package helpers
 
 import (
 	"context"
+	"errors"
 	"net/http"
 	"net/url"
 	"strings"
@@ -29,13 +30,13 @@ func HandleLogin(w http.ResponseWriter, r *http.Request, oauthConf *oauth2.Confi
 	http.Redirect(w, r, url, http.StatusTemporaryRedirect)
 }
 
-func CallbackFromGoogle(w http.ResponseWriter, r *http.Request, oauthConfGl *oauth2.Config, oauthStateStringGl string) *oauth2.Token {
+func CallbackFromGoogle(w http.ResponseWriter, r *http.Request, oauthConfGl *oauth2.Config, oauthStateStringGl string) (*oauth2.Token, error) {
 	state := r.FormValue("state")
 
 	if state != oauthStateStringGl {
 		log.Info("invalid oauth state, expected " + oauthStateStringGl + ", got " + state + "\n")
 		http.Redirect(w, r, "/", http.StatusTemporaryRedirect)
-		return nil
+		return nil, errors.New("error: invalid state")
 	}
 
 	code := r.FormValue("code")
@@ -46,20 +47,21 @@ func CallbackFromGoogle(w http.ResponseWriter, r *http.Request, oauthConfGl *oau
 		reason := r.FormValue("error_reason")
 		if reason == "user_denied" {
 			w.Write([]byte("User has denied Permission.."))
+			return nil, errors.New("error: user has denied permission")
 		}
+		return nil, errors.New("error: code not found")
 	} else {
 		token, err := oauthConfGl.Exchange(context.Background(), code)
 		if err != nil {
 			log.Error("oauthConfGl.Exchange() failed with " + err.Error() + "\n")
-			return nil
+			return nil, err
 		}
 		var authData models.Authentication
 		authData.AccessToken = token.AccessToken
 		authData.RefreshToken = token.RefreshToken
 		authData.Expiry = token.Expiry
 		authData.TokenType = token.TokenType
-		return token
+		return token, nil
 
 	}
-	return nil
 }

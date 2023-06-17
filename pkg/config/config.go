@@ -20,7 +20,7 @@ var (
 		ClientID:     "",
 		ClientSecret: "",
 		RedirectURL:  "http://localhost:3000/auth/google/callback",
-		Scopes:       []string{"https://www.googleapis.com/auth/userinfo.email", "https://www.googleapis.com/auth/calendar.events", "https://www.googleapis.com/auth/calendar"},
+		Scopes:       []string{"https://www.googleapis.com/auth/userinfo.profile", "https://www.googleapis.com/auth/calendar.events", "https://www.googleapis.com/auth/calendar"},
 		Endpoint:     google.Endpoint,
 	}
 	OauthStateStringGl = ""
