@@ -121,6 +121,8 @@ func (c *calendarRestRepository) GetEventByID(ctx context.Context, eventId strin
 	}
 	eventDetail := models.EventResource{
 		Kind:        event.Kind,
+		Etag:        event.Etag,
+		HTMLLink:    event.HtmlLink,
 		Summary:     event.Summary,
 		HangoutLink: event.HangoutLink,
 		ID:          event.Id,
