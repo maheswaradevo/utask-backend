@@ -26,13 +26,16 @@ func (s *googleOauthService) HandleGoogleLogin(w http.ResponseWriter, r *http.Re
 	helpers.HandleLogin(w, r, config.OauthConfGl, config.OauthStateStringGl)
 }
 
-func (s *googleOauthService) CallBackFromGoogle(w http.ResponseWriter, r *http.Request) *oauth2.Token {
-	token := helpers.CallbackFromGoogle(w, r, config.OauthConfGl, config.OauthStateStringGl)
+func (s *googleOauthService) CallBackFromGoogle(w http.ResponseWriter, r *http.Request) (*oauth2.Token, error) {
+	token, err := helpers.CallbackFromGoogle(w, r, config.OauthConfGl, config.OauthStateStringGl)
+	if err != nil {
+		return nil, err
+	}
 	var redisKey = helpers.CacheWithPrefix(constants.CacheAuthGoogle, constants.CacheGoogleLogin)
 
 	var expTime float64
 
-	_, err := s.googleRedisRepository.FindByKey(context.Background(), redisKey)
+	_, err = s.googleRedisRepository.FindByKey(context.Background(), redisKey)
 	if err != nil && expTime == 0 {
 		data := models.OauthRedisData{
 			AccessToken:  token.AccessToken,
@@ -45,8 +48,8 @@ func (s *googleOauthService) CallBackFromGoogle(w http.ResponseWriter, r *http.R
 
 		_, errSave := s.googleRedisRepository.Save(context.Background(), redisKey, &data)
 		if errSave != nil {
-			return nil
+			return nil, errSave
 		}
 	}
-	return token
+	return token, nil
 }

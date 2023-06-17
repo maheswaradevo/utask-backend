@@ -8,5 +8,5 @@ import (
 
 type GoogleOauthService interface {
 	HandleGoogleLogin(w http.ResponseWriter, r *http.Request)
-	CallBackFromGoogle(w http.ResponseWriter, r *http.Request) *oauth2.Token
+	CallBackFromGoogle(w http.ResponseWriter, r *http.Request) (*oauth2.Token, error)
 }
