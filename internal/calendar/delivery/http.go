@@ -3,6 +3,7 @@ package delivery
 import (
 	"github.com/labstack/echo/v4"
 	"github.com/maheswaradevo/utask-backend/internal/calendar"
+	"github.com/maheswaradevo/utask-backend/internal/models"
 	"github.com/maheswaradevo/utask-backend/pkg/common"
 	"github.com/maheswaradevo/utask-backend/pkg/common/helpers"
 )
@@ -22,6 +23,7 @@ func CalendarNewDelivery(routerGroupV1 *echo.Group, calendarService calendar.Cal
 	{
 		routeGroup.GET("/", calendarDelivery.GetEvents)
 		routeGroup.GET("/:eventId", calendarDelivery.GetEventByID)
+		routeGroup.POST("/messages/:eventId", calendarDelivery.SendSMS)
 	}
 	return
 }
@@ -49,4 +51,28 @@ func (c CalendarHTTPDelivery) GetEventByID(ctx echo.Context) error {
 		})
 	}
 	return c.Ok(ctx, eventDetail)
+}
+
+func (c CalendarHTTPDelivery) SendSMS(ctx echo.Context) error {
+	var notifRequest models.NotificationRequest
+
+	if err := ctx.Bind(&notifRequest); err != nil {
+		return c.WrapBadRequest(ctx, &common.APIResponse{
+			Code:    400,
+			Message: "Bad Request",
+			Errors:  err,
+		})
+	}
+
+	eventId := ctx.Param("eventId")
+
+	res, err := c.calendarService.SendSMS(helpers.Context(ctx), eventId, notifRequest.PhoneNumber)
+	if err != nil {
+		return c.InternalServerError(ctx, &common.APIResponse{
+			Code:    500,
+			Message: "Internal Server Error",
+			Errors:  err,
+		})
+	}
+	return c.Ok(ctx, res)
 }

@@ -106,7 +106,7 @@ func (c *calendarRestRepository) GetEventByID(ctx context.Context, eventId strin
 		return nil, err
 	}
 
-	overrides := make([]models.Overrides, 1)
+	overrides := make([]models.Overrides, 2)
 	for item, override := range event.Reminders.Overrides {
 		overrides[item].Method = override.Method
 		overrides[item].Minutes = int(override.Minutes)

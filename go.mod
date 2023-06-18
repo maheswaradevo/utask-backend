@@ -4,6 +4,7 @@ go 1.20
 
 require (
 	github.com/go-redis/redis/v8 v8.11.5
+	github.com/go-resty/resty/v2 v2.7.0
 	github.com/json-iterator/go v1.1.12
 	github.com/labstack/echo/v4 v4.10.2
 	go.uber.org/zap v1.24.0
