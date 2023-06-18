@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"log"
 
 	"github.com/maheswaradevo/utask-backend/pkg"
@@ -29,5 +30,7 @@ func main() {
 
 	pkg.Init(app, rc, *cfg, logger)
 
-	app.Start(":3000")
+	PORT := fmt.Sprintf("%s:%s", "0.0.0.0", cfg.Port)
+
+	app.Start(PORT)
 }
