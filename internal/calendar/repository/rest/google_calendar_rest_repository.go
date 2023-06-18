@@ -139,6 +139,10 @@ func (c *calendarRestRepository) GetEventByID(ctx context.Context, eventId strin
 			UseDefault: event.Reminders.UseDefault,
 			Overrides:  overrides,
 		},
+		Organizer: models.Organizer{
+			Email:       event.Organizer.Email,
+			DisplayName: event.Organizer.DisplayName,
+		},
 	}
 
 	return &eventDetail, err
