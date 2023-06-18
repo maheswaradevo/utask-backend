@@ -21,15 +21,16 @@ func NewCalendarRestRepository(logger *zap.Logger) calendarRestRepository {
 }
 
 func (c *calendarRestRepository) GetEventList(ctx context.Context, token *oauth2.Token) (*models.EventList, error) {
-	t := time.Now().Format(time.RFC3339)
+	tMax := time.Now().Add(45 * time.Hour).Format(time.RFC3339)
+
+	tMin := time.Now().Add(-720 * time.Hour).Format(time.RFC3339)
 
 	svc, err := calendar.NewService(context.Background(), option.WithHTTPClient(config.CalendarServiceClient(token)))
 	if err != nil {
 		c.logger.Error("error: %v", zap.Error(err))
 		return nil, err
 	}
-	events, err := svc.Events.List("primary").TimeMin(t).MaxResults(10).Do()
-
+	events, err := svc.Events.List("primary").TimeMin(tMin).TimeMax(tMax).MaxResults(100).Do()
 	if err != nil {
 		c.logger.Error("error: %v", zap.Error(err))
 		return nil, err
@@ -137,6 +138,10 @@ func (c *calendarRestRepository) GetEventByID(ctx context.Context, eventId strin
 		Reminders: models.Reminders{
 			UseDefault: event.Reminders.UseDefault,
 			Overrides:  overrides,
+		},
+		Organizer: models.Organizer{
+			Email:       event.Organizer.Email,
+			DisplayName: event.Organizer.DisplayName,
 		},
 	}
 
