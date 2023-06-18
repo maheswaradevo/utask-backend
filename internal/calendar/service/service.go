@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"net/http"
+	"strings"
 	"time"
 
 	"github.com/maheswaradevo/utask-backend/internal/authentications"
@@ -102,12 +103,20 @@ func (s *calendarService) SendSMS(ctx context.Context, eventId, phoneNumber stri
 	}
 	startDate := helpers.ParseDate(&event.Start.DateTime, helpers.DateLayoutTimeZone)
 	notify := startDate.Add(-reminder * time.Minute)
+	dateSpStr := strings.Split(event.Start.DateTime, "T")
+	hourSpStr := strings.Split(dateSpStr[1], "+")
+	var textMessage string
+	if event.HangoutLink != "" {
+		textMessage = fmt.Sprintf("Remember! You have an event called %v.\nDate: %v\nTime: %v\nLocation: %v", event.Summary, dateSpStr[0], hourSpStr[0], event.HangoutLink)
+	} else {
+		textMessage = fmt.Sprintf("Remember! You have an event called %v.\nDate: %v\nTime: %v", event.Summary, dateSpStr[0], hourSpStr[0])
+	}
 
 	response, errSendSMS := s.wavecellClient.SendSMS(helpers.Env("SMS_API_URL"), notification.SendSMS{
 		Destination: phoneNumber,
 		Country:     "ID",
 		Source:      "u-Task",
-		Text:        fmt.Sprintf("Ingat ada kegiatan %v", event.Summary),
+		Text:        textMessage,
 		Encoding:    "AUTO",
 		Scheduled:   notify,
 	})
