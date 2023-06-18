@@ -1,7 +1,6 @@
 package helpers
 
 import (
-	"fmt"
 	"time"
 )
 
@@ -18,8 +17,6 @@ func ParseDate(date *string, layout string) *time.Time {
 		return nil
 	}
 	t, err := time.ParseInLocation(layout, *date, Location)
-	fmt.Printf("t: %v\n", t)
-	fmt.Printf("err: %v\n", err)
 	if err != nil {
 		return nil
 	}
