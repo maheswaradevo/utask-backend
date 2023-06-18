@@ -19,7 +19,7 @@ var (
 	OauthConfGl = &oauth2.Config{
 		ClientID:     "",
 		ClientSecret: "",
-		RedirectURL:  "http://localhost:3000/auth/google/callback",
+		RedirectURL:  "https://utask-backend-production.up.railway.app/auth/google/callback",
 		Scopes:       []string{"https://www.googleapis.com/auth/userinfo.profile", "https://www.googleapis.com/auth/calendar.events", "https://www.googleapis.com/auth/calendar"},
 		Endpoint:     google.Endpoint,
 	}
