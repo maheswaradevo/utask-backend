@@ -30,7 +30,7 @@ func main() {
 
 	pkg.Init(app, rc, *cfg, logger)
 
-	address := fmt.Sprintf("%s:%s", "0.0.0.0", cfg.Port)
+	address := fmt.Sprintf("0.0.0.0:%s", cfg.Port)
 
 	app.Start(address)
 }
