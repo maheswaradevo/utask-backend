@@ -19,7 +19,6 @@ var (
 	OauthConfGl = &oauth2.Config{
 		ClientID:     "",
 		ClientSecret: "",
-		RedirectURL:  "https://utask-backend-production.up.railway.app/auth/google/callback",
 		Scopes:       []string{"https://www.googleapis.com/auth/userinfo.profile", "https://www.googleapis.com/auth/calendar.events", "https://www.googleapis.com/auth/calendar"},
 		Endpoint:     google.Endpoint,
 	}
@@ -33,6 +32,7 @@ type Config struct {
 	WhiteListed   string
 	ApiSecretKey  string
 	RedisConfig   Redis
+	AppEnv        string
 
 	GoogleClientID       string
 	GoogleClientSecret   string
@@ -102,6 +102,13 @@ func Init() {
 
 	maxConnAge, _ := time.ParseDuration(os.Getenv("REDIS_POOL_MAX_CONN_AGE"))
 	config.RedisConfig.DialTimeout = maxConnAge
+
+	config.AppEnv = os.Getenv("APP_ENV")
+	if config.AppEnv == "local" {
+		OauthConfGl.RedirectURL = "http://localhost:3000/auth/google/callback"
+	} else if config.AppEnv == "production" {
+		OauthConfGl.RedirectURL = "https://utask-backend-production.up.railway.app/auth/google/callback"
+	}
 }
 
 func GetDatabase(username, password, address, databaseName string) *sql.DB {
