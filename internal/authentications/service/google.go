@@ -53,3 +53,19 @@ func (s *googleOauthService) CallBackFromGoogle(w http.ResponseWriter, r *http.R
 	}
 	return token, nil
 }
+
+func (s *googleOauthService) Logout(ctx context.Context) (bool, error) {
+	var redisKey = helpers.CacheWithPrefix(constants.CacheAuthGoogle, constants.CacheGoogleLogin)
+	data, err := s.googleRedisRepository.FindByKey(ctx, redisKey)
+	if err != nil {
+		return false, err
+	}
+	url := "https://accounts.google.com/o/oauth2/revoke?token="
+
+	_, err = http.Get(url + data.AccessToken)
+	if err != nil {
+		return false, err
+	}
+	_ = s.googleRedisRepository.DeleteKey(ctx, redisKey)
+	return true, nil
+}

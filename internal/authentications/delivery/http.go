@@ -4,6 +4,7 @@ import (
 	"github.com/labstack/echo/v4"
 	"github.com/maheswaradevo/utask-backend/internal/authentications"
 	"github.com/maheswaradevo/utask-backend/pkg/common"
+	"github.com/maheswaradevo/utask-backend/pkg/common/helpers"
 )
 
 type AuthenticationHTTPDelivery struct {
@@ -21,6 +22,7 @@ func AuthenticationNewDelivery(routeGroupV1 *echo.Group, oauthService authentica
 	{
 		routeGroup.GET("/login-gl", authenticationDelivery.HandleGoogleLogin)
 		routeGroup.GET("/google/callback", authenticationDelivery.GoogleCallback)
+		routeGroup.GET("/logout", authenticationDelivery.Logout)
 	}
 	return
 }
@@ -33,4 +35,16 @@ func (a AuthenticationHTTPDelivery) HandleGoogleLogin(ctx echo.Context) error {
 func (a AuthenticationHTTPDelivery) GoogleCallback(ctx echo.Context) error {
 	a.oauthService.CallBackFromGoogle(ctx.Response().Writer, ctx.Request())
 	return nil
+}
+
+func (a AuthenticationHTTPDelivery) Logout(ctx echo.Context) error {
+	isLogOut, err := a.oauthService.Logout(helpers.Context(ctx))
+	if err != nil {
+		return a.InternalServerError(ctx, &common.APIResponse{
+			Code:    500,
+			Message: "Internal Server Error",
+			Errors:  err,
+		})
+	}
+	return a.Ok(ctx, isLogOut)
 }

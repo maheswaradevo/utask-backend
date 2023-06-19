@@ -47,3 +47,9 @@ func (r googleOauthRedisRepository) GetExpirationTime(ctx context.Context, key s
 	val := cmd.Val().Seconds()
 	return val
 }
+
+func (r googleOauthRedisRepository) DeleteKey(ctx context.Context, key string) string {
+	cmd := r.rc.FlushAll(ctx)
+	val := cmd.Val()
+	return val
+}
