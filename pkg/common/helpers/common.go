@@ -25,6 +25,7 @@ func HandleLogin(w http.ResponseWriter, r *http.Request, oauthConf *oauth2.Confi
 	parameters.Add("state", oauthStateString)
 	parameters.Add("access_type", "offline")
 	parameters.Add("prompt", "consent")
+	parameters.Add("expires_in", "28800")
 	URL.RawQuery = parameters.Encode()
 	url := URL.String()
 	http.Redirect(w, r, url, http.StatusTemporaryRedirect)
