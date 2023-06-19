@@ -41,7 +41,7 @@ func (s *googleOauthService) CallBackFromGoogle(w http.ResponseWriter, r *http.R
 			AccessToken:  token.AccessToken,
 			RefreshToken: token.RefreshToken,
 			Key:          redisKey,
-			ExpiredTime:  int(1 * time.Hour),
+			ExpiredTime:  int(8 * time.Hour),
 			Expiry:       token.Expiry,
 			TokenType:    token.TokenType,
 		}
