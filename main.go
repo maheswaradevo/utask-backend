@@ -9,6 +9,7 @@ import (
 
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/labstack/echo/v4"
+	"github.com/labstack/echo/v4/middleware"
 	"github.com/maheswaradevo/utask-backend/pkg/config"
 )
 
@@ -22,6 +23,10 @@ func main() {
 	config.NewOauthGoogle()
 	// db := config.GetDatabase(cfg.Database.Username, cfg.Database.Password, cfg.Database.Address, cfg.Database.Name)
 	app := echo.New()
+	app.Use(middleware.CORSWithConfig(middleware.CORSConfig{
+		AllowOrigins: []string{"*"},
+		AllowHeaders: []string{echo.HeaderOrigin, echo.HeaderContentType, echo.HeaderAccept},
+	}))
 
 	rc, err := config.NewRedisClient()
 	if err != nil {
