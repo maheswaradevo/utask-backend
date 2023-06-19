@@ -33,8 +33,15 @@ func (a AuthenticationHTTPDelivery) HandleGoogleLogin(ctx echo.Context) error {
 }
 
 func (a AuthenticationHTTPDelivery) GoogleCallback(ctx echo.Context) error {
-	a.oauthService.CallBackFromGoogle(ctx.Response().Writer, ctx.Request())
-	return nil
+	t, err := a.oauthService.CallBackFromGoogle(ctx.Response().Writer, ctx.Request())
+	if err != nil {
+		return a.InternalServerError(ctx, &common.APIResponse{
+			Code:    500,
+			Message: "Internal Server Error",
+			Errors:  err,
+		})
+	}
+	return a.Ok(ctx, t)
 }
 
 func (a AuthenticationHTTPDelivery) Logout(ctx echo.Context) error {
