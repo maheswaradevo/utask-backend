@@ -35,7 +35,7 @@ var (
 
 func (a AuthenticationHTTPDelivery) HandleGoogleLogin(ctx echo.Context) error {
 	a.oauthService.HandleGoogleLogin(ctx.Response().Writer, ctx.Request())
-	return nil
+	return a.Ok(ctx, "Ok")
 }
 
 func (a AuthenticationHTTPDelivery) SignIn(ctx echo.Context) error {
