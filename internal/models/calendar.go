@@ -23,6 +23,7 @@ type EventResource struct {
 	Created     string    `json:"created"`
 	Updated     string    `json:"updated"`
 	Summary     string    `json:"summary"`
+	Description string    `json:"description"`
 	Creator     Creator   `json:"creator"`
 	Organizer   Organizer `json:"organizer"`
 	Start       StartTime `json:"start"`

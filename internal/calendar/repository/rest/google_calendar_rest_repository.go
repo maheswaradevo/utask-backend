@@ -125,6 +125,7 @@ func (c *calendarRestRepository) GetEventByID(ctx context.Context, eventId strin
 		Etag:        event.Etag,
 		HTMLLink:    event.HtmlLink,
 		Summary:     event.Summary,
+		Description: event.Description,
 		HangoutLink: event.HangoutLink,
 		ID:          event.Id,
 		Created:     event.Created,
