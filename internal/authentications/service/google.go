@@ -26,8 +26,8 @@ func (s *googleOauthService) HandleGoogleLogin(w http.ResponseWriter, r *http.Re
 	helpers.HandleLogin(w, r, config.OauthConfGl, config.OauthStateStringGl)
 }
 
-func (s *googleOauthService) CallBackFromGoogle(w http.ResponseWriter, r *http.Request) (*oauth2.Token, error) {
-	token, err := helpers.CallbackFromGoogle(w, r, config.OauthConfGl, config.OauthStateStringGl)
+func (s *googleOauthService) CallBackFromGoogle(w http.ResponseWriter, r *http.Request, state, code string) (*oauth2.Token, error) {
+	token, err := helpers.CallbackFromGoogle(w, r, config.OauthConfGl, state, code, config.OauthStateStringGl)
 	if err != nil {
 		return nil, err
 	}

@@ -30,16 +30,12 @@ func HandleLogin(w http.ResponseWriter, r *http.Request, oauthConf *oauth2.Confi
 	http.Redirect(w, r, url, http.StatusTemporaryRedirect)
 }
 
-func CallbackFromGoogle(w http.ResponseWriter, r *http.Request, oauthConfGl *oauth2.Config, oauthStateStringGl string) (*oauth2.Token, error) {
-	state := r.FormValue("state")
-
+func CallbackFromGoogle(w http.ResponseWriter, r *http.Request, oauthConfGl *oauth2.Config, state string, code string, oauthStateStringGl string) (*oauth2.Token, error) {
 	if state != oauthStateStringGl {
 		log.Info("invalid oauth state, expected " + oauthStateStringGl + ", got " + state + "\n")
 		http.Redirect(w, r, "/", http.StatusTemporaryRedirect)
 		return nil, errors.New("error: invalid state")
 	}
-
-	code := r.FormValue("code")
 
 	if code == "" {
 		log.Warn("Code not found..")

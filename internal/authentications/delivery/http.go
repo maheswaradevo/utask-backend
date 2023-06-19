@@ -23,17 +23,23 @@ func AuthenticationNewDelivery(routeGroupV1 *echo.Group, oauthService authentica
 		routeGroup.GET("/login-gl", authenticationDelivery.HandleGoogleLogin)
 		routeGroup.GET("/google/callback", authenticationDelivery.GoogleCallback)
 		routeGroup.GET("/logout", authenticationDelivery.Logout)
+		routeGroup.GET("/sign-in", authenticationDelivery.SignIn)
 	}
 	return
 }
+
+var (
+	code  string
+	state string
+)
 
 func (a AuthenticationHTTPDelivery) HandleGoogleLogin(ctx echo.Context) error {
 	a.oauthService.HandleGoogleLogin(ctx.Response().Writer, ctx.Request())
 	return nil
 }
 
-func (a AuthenticationHTTPDelivery) GoogleCallback(ctx echo.Context) error {
-	t, err := a.oauthService.CallBackFromGoogle(ctx.Response().Writer, ctx.Request())
+func (a AuthenticationHTTPDelivery) SignIn(ctx echo.Context) error {
+	t, err := a.oauthService.CallBackFromGoogle(ctx.Response().Writer, ctx.Request(), state, code)
 	if err != nil {
 		return a.InternalServerError(ctx, &common.APIResponse{
 			Code:    500,
@@ -42,6 +48,12 @@ func (a AuthenticationHTTPDelivery) GoogleCallback(ctx echo.Context) error {
 		})
 	}
 	return a.Ok(ctx, t)
+}
+
+func (a AuthenticationHTTPDelivery) GoogleCallback(ctx echo.Context) error {
+	code = ctx.QueryParams().Get("code")
+	state = ctx.QueryParams().Get("state")
+	return nil
 }
 
 func (a AuthenticationHTTPDelivery) Logout(ctx echo.Context) error {
