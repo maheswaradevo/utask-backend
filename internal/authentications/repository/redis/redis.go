@@ -23,7 +23,7 @@ func (r googleOauthRedisRepository) Save(ctx context.Context, key string, data *
 	if errJson != nil {
 		return nil, errJson
 	}
-	err := r.rc.Set(ctx, key, jsonStr, 1*time.Hour).Err()
+	err := r.rc.Set(ctx, key, jsonStr, 8*time.Hour).Err()
 	if err != nil {
 		return nil, err
 	}
